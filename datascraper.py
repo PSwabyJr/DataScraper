@@ -1,3 +1,8 @@
+"""
+datascraper.py scrapes data from .csv file from datatree.com. 
+Scarped data is saved in a new .csv
+"""
+
 import csv
 from os import path
 from datetime import date
@@ -14,8 +19,9 @@ def openScrapeGUI() -> list:
     return filename, newfilename
 
 
-
+# Columns to Scrape Data into a new .csv
 Parameters = ['APN - UNFORMATTED', 'OWNER MAILING NAME', 'MAILING STREET ADDRESS', 'MAIL CITY', 'MAIL STATE', 'MAIL ZIP/ZIP+4', 'COUNTY', 'SITUS STATE', 'LEGAL DESCRIPTION']
+# Columns for new .csv
 Header = ['apn', 'ao', 'address1', 'city', 'STATE', 'zip', 'cty', 'ctystate', 'legal description', 'DATE']
 
 if __name__ == "__main__":
@@ -27,13 +33,17 @@ if __name__ == "__main__":
     writer.writerow(Header)
     rows = []
     
+    '''
+    Note: .csv generated from Datatree.com have data in ALL CAPS format.
+    '''
     with open(filename, 'r') as data:
         for dataAttributes in csv.DictReader(data):
             for parameter in Parameters:
+                # Keep data in ALL CAPS if it's state initials or legal description
                 if parameter == 'MAIL STATE' or parameter == 'SITUS STATE' or parameter == 'LEGAL DESCRIPTION':
                     rows.append(dataAttributes[parameter])
                 else:
-                    rows.append(dataAttributes[parameter].title())
+                    rows.append(dataAttributes[parameter].title()) # puts data in CamelCase format
             rows.append(today_date)
             writer.writerow(rows)
             rows.clear()
